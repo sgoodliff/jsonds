@@ -65,7 +65,16 @@ func (s *server) root(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) search(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "Sorry not yet", http.StatusNotImplemented)
+
+	var targets []string
+
+	resp, err := json.Marshal(targets)
+	if err != nil {
+
+		http.Error(w, "cannot marshal targets response", http.StatusBadRequest)
+	}
+	w.Write(resp)
+
 }
 func (s *server) query(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Sorry not yet", http.StatusNotImplemented)
