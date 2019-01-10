@@ -25,6 +25,9 @@ func main() {
 	// initialize routes, and start http server
 	http.HandleFunc("/", cors(s.root))
 	http.HandleFunc("/annotations", cors(s.annotations))
+	http.HandleFunc("/search", cors(s.search))
+	http.HandleFunc("/query", cors(s.query))
+
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", *port), nil); err != nil {
 		log.Fatal(err)
 	}

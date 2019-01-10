@@ -64,6 +64,13 @@ func (s *server) root(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ok\n")
 }
 
+func (s *server) search(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "Sorry not yet", http.StatusNotImplemented)
+}
+func (s *server) query(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "Sorry not yet", http.StatusNotImplemented)
+}
+
 func (s *server) annotations(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%v: %v", r.URL.Path, r.Method)
 	switch r.Method {
