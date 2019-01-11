@@ -64,22 +64,6 @@ func (s *server) root(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ok\n")
 }
 
-func (s *server) search(w http.ResponseWriter, r *http.Request) {
-
-	var targets []string
-
-	resp, err := json.Marshal(targets)
-	if err != nil {
-
-		http.Error(w, "cannot marshal targets response", http.StatusBadRequest)
-	}
-	w.Write(resp)
-
-}
-func (s *server) query(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "Sorry not yet", http.StatusNotImplemented)
-}
-
 func (s *server) annotations(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%v: %v", r.URL.Path, r.Method)
 	switch r.Method {
@@ -125,4 +109,10 @@ func annResp(t time.Time, i int) AnnotationResponse {
 		Text:  fmt.Sprintf("text about the event %04d", i),
 		Tags:  "atag btag ctag",
 	}
+}
+
+func writeError(w http.ResponseWriter, e error, m string) {
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte("{\"error\": \"" + m + ": " + e.Error() + "\"}"))
+
 }
