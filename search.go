@@ -10,7 +10,7 @@ import (
 func (s *server) search(w http.ResponseWriter, r *http.Request) {
 
 	var targets []string
-	targets = append(targets, "Node", "GameType", "PlayerCount")
+	targets = append(targets, "Node", "GameType", "PlayerCount", "Delays")
 
 	resp, err := json.Marshal(targets)
 	if err != nil {

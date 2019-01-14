@@ -22,12 +22,14 @@ func main() {
 	// emit period events starting now
 	go s.generate(*p)
 
+	log.Println("Starting up on 8080")
+
 	// initialize routes, and start http server
 	http.HandleFunc("/", cors(s.root))
 	http.HandleFunc("/annotations", cors(s.annotations))
 	http.HandleFunc("/search", cors(s.search))
 	http.HandleFunc("/query", cors(s.query))
-
+	http.HandleFunc("/ok", cors(s.ok))
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", *port), nil); err != nil {
 		log.Fatal(err)
 	}

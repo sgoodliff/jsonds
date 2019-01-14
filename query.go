@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 )
@@ -66,8 +67,13 @@ type tableResponse struct {
 }
 
 func (s *server) query(w http.ResponseWriter, r *http.Request) {
-	http.Error(w, "Sorry not yet", http.StatusNotImplemented)
 
+	if (*r).Method == "OPTIONS" {
+		return
+	}
+
+	//http.Error(w, "Sorry not yet", http.StatusNotImplemented)
+	log.Println("Doing a query")
 	var q bytes.Buffer
 
 	_, err := q.ReadFrom(r.Body)
@@ -83,12 +89,19 @@ func (s *server) query(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(query.Targets[0].Type)
+
 	switch query.Targets[0].Type {
 	case "timeserie":
+		log.Println("TimeSeries Query")
 		s.sendTimeseries(w, query)
 	case "table":
 		http.Error(w, "Sorry not yet", http.StatusNotImplemented)
+
+	default:
+		http.Error(w, "Fall Through", http.StatusNotImplemented)
 	}
+	log.Println("Leaving Query")
 }
 
 // sendTimeseries creates and writes a JSON response to a request for time series data.
@@ -96,20 +109,21 @@ func (s *server) sendTimeseries(w http.ResponseWriter, q *query) {
 
 	response := []timeseriesResponse{}
 	// SJG GO FETCH STUFF
-	/*
-		for _, t := range q.Targets {
-			target := t.Target
+
+	for _, t := range q.Targets {
+		target := t.Target
+		/*
 			metric, err := s.metrics.Get(target)
 			if err != nil {
 				writeError(w, err, "Cannot get metric for target "+target)
 				return
 			}
-			response = append(response, timeseriesResponse{
-				Target:     target,
-				Datapoints: *(metric.fetchDatapoints(q.Range.From, q.Range.To, q.MaxDataPoints)),
-			})
-		}
-	*/
+		*/
+		response = append(response, timeseriesResponse{
+			Target:     target,
+			Datapoints: *(fetchDatapoints(q.Range.From, q.Range.To, q.MaxDataPoints)),
+		})
+	}
 
 	jsonResp, err := json.Marshal(response)
 	if err != nil {
