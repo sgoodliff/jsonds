@@ -2,50 +2,53 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"time"
 )
 
+// Count is a single time series data tuple, consisting of
+// a floating-point value N and a timestamp T.
+type Count struct {
+	N float64
+	T time.Time
+}
+
 func fetchDatapoints(from, to time.Time, maxDataPoints int) *[]row {
 
+	log.Println("INPUTS")
 	log.Println(to)
 	log.Println(from)
 	log.Println(maxDataPoints)
 
+	log.Println("TIMINGS")
 	d := to.Sub(from)
 	d.Round(time.Minute)
 	log.Println(d.Minutes())
+	points := int(d.Minutes())
 
-	/*
-		g.m.Lock()
-		defer g.m.Unlock()
-		length := len(g.list)
+	ir := IntRange{0, 20}
+	rand.Seed(time.Now().UTC().UnixNano())
 
-		g.sort()
+	log.Print("OUTPUT")
+	// need something like  [622,1450754160000],  // Metric value as a float , unixtimestamp in milliseconds
+	for i := 0; i < points; i++ {
 
+		log.Println(ir.NextRandom())
 
-		// Stage 1: extract all data points within the given time range.
-		pointsInRange := make([]row, 0, length)
-		for i := 0; i < length; i++ {
-			count := g.list[(i+g.head)%length] // wrap around
-			if count.T.After(from) && count.T.Before(to) {
-				pointsInRange = append(pointsInRange, row{count.N, count.T.UnixNano() / 1000000}) // need ms
-			}
-		}
+	}
 
-		points := len(pointsInRange)
-
-		if points <= maxDataPoints {
-			return &pointsInRange
-		}
-
-		// Stage 2: if more data points than requested exist in the time range,
-		// thin out the slice evenly
-		rows := make([]row, maxDataPoints)
-		ratio := float64(len(pointsInRange)) / float64(len(rows))
-		for i := range rows {
-			rows[i] = pointsInRange[int(float64(i)*ratio)]
-		}
-	*/
 	rows := make([]row, maxDataPoints)
+	log.Println("starting minute iteration")
+
+	for x := from; x.Minute() <= to.Minute(); x = x.Add(time.Minute * 1) {
+		c := Count{T: x.UnixNano(), N: float64(1)}
+
+		//log.Println(ir.NextRandom())
+		//log.Println(int64(x.UnixNano()))
+		log.Println(c)
+
+	}
+	log.Println("ending minute iteration")
+
 	return &rows
 }
