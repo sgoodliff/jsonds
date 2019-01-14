@@ -11,6 +11,7 @@ import (
 type Count struct {
 	N float64
 	T time.Time
+	U int64
 }
 
 func fetchDatapoints(from, to time.Time, maxDataPoints int) *[]row {
@@ -41,13 +42,14 @@ func fetchDatapoints(from, to time.Time, maxDataPoints int) *[]row {
 	log.Println("starting minute iteration")
 
 	for x := from; x.Minute() <= to.Minute(); x = x.Add(time.Minute * 1) {
-		c := Count{T: x.UnixNano(), N: float64(1)}
+		c := Count{T: x, N: float64(ir.NextRandom()), U: x.Unix()}
 
 		//log.Println(ir.NextRandom())
 		//log.Println(int64(x.UnixNano()))
 		log.Println(c)
 
 	}
+
 	log.Println("ending minute iteration")
 
 	return &rows
