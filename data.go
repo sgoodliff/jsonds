@@ -25,32 +25,43 @@ func fetchDatapoints(from, to time.Time, maxDataPoints int) *[]row {
 	d := to.Sub(from)
 	d.Round(time.Minute)
 	log.Println(d.Minutes())
-	points := int(d.Minutes())
+	length := int(d.Minutes())
 
 	ir := IntRange{0, 20}
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	log.Print("OUTPUT")
-	// need something like  [622,1450754160000],  // Metric value as a float , unixtimestamp in milliseconds
-	for i := 0; i < points; i++ {
+	/*
+		// need something like  [622,1450754160000],  // Metric value as a float , unixtimestamp in milliseconds
+		for i := 0; i < length; i++ {
 
-		log.Println(ir.NextRandom())
+			log.Println(ir.NextRandom())
 
-	}
+		}
+	*/
+	//rows := make([]row, maxDataPoints)
 
-	rows := make([]row, maxDataPoints)
+	pointsInRange := make([]row, 0, length)
+
 	log.Println("starting minute iteration")
 
-	for x := from; x.Minute() <= to.Minute(); x = x.Add(time.Minute * 1) {
-		c := Count{T: x, N: float64(ir.NextRandom()), U: x.Unix()}
+	// 1 minute resolution
 
+	x := from
+	//for x := from; x.Minute() <= to.Minute(); x = x.Add(time.Minute * 1) {
+	for i := 0; i <= length; i++ {
+
+		c := Count{T: x, N: float64(ir.NextRandom()), U: x.UnixNano() / 1000000}
+
+		pointsInRange = append(pointsInRange, row{c.N, c.U})
 		//log.Println(ir.NextRandom())
 		//log.Println(int64(x.UnixNano()))
 		log.Println(c)
-
+		x = x.Add(time.Minute * 1)
 	}
 
 	log.Println("ending minute iteration")
 
-	return &rows
+	//return &rows
+	return &pointsInRange
 }
